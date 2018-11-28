@@ -176,7 +176,7 @@
                         <Import-Package>
                             !javax.xml.parsers,
                             !org.xml.sax,
-                            org.osgi.service.repository;resolution:=mandatory",
+                            org.osgi.service.repository;resolution:=mandatory,
                             org.osgi.service.log;resolution:=optional,
                             org.osgi.service.obr;resolution:=optional,
                             org.apache.felix.shell;resolution:=optional,
