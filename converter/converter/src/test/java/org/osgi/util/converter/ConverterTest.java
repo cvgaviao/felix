@@ -432,6 +432,42 @@ public class ConverterTest {
 
         assertEquals(Integer.valueOf(0), adapted.convert("hello").to(Integer.class));
     }
+    
+    @Test
+    public void testInheritedCustomErrorHandling() {
+        
+        ConverterBuilder cb = Converters.newConverterBuilder();
+        cb.errorHandler(new ConverterFunction() {
+            @Override
+            public Object apply(Object pObj, Type pTargetType) throws Exception {
+                if ("java.lang.Integer".equals(pTargetType.getTypeName()))
+                {
+                    return 0;
+                }
+                return ConverterFunction.CANNOT_HANDLE;
+            }
+        });
+        Converter convWithErrorHandler = cb.build();
+
+        ConverterBuilder cb2 = convWithErrorHandler.newConverterBuilder();
+        cb2.errorHandler(new ConverterFunction() {
+            @Override
+            public Object apply(Object obj, Type targetType) {
+                if ("java.lang.Integer".equals(obj)) {
+                    return -1;
+                }
+                return ConverterFunction.CANNOT_HANDLE;
+            }
+        });
+        Converter adapted = cb2.build();
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("code", "harley");
+        MyIntf2 inter = adapted.convert(map).to(MyIntf2.class);
+        assertEquals("harley", inter.code());
+        assertEquals(Integer.valueOf(-1), inter.value());
+
+    }
 
     @Test
     public void testCustomErrorHandling() {
