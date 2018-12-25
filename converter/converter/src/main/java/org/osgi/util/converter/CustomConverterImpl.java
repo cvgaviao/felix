@@ -185,7 +185,9 @@ class CustomConverterImpl implements InternalConverter {
 				    return result;
 				}
 			} catch (Exception ex) {
-				for (ConverterFunction eh : errorHandlers) {
+			    List<ConverterFunction> shallowCopy = errorHandlers.subList(0, errorHandlers.size());
+			    Collections.reverse(shallowCopy);
+				for (ConverterFunction eh : shallowCopy) {
 					try {
 						Object handled = eh.apply(object, type);
 						if (handled != ConverterFunction.CANNOT_HANDLE)
@@ -226,7 +228,9 @@ class CustomConverterImpl implements InternalConverter {
                     try {
                         return method.invoke(wrapped, args);
                     } catch (Exception ex) {
-                        for (ConverterFunction eh : errorHandlers) {
+                        List<ConverterFunction> shallowCopy = errorHandlers.subList(0, errorHandlers.size());
+                        Collections.reverse(shallowCopy);
+                        for (ConverterFunction eh : shallowCopy) {
                             try {
                                 Object handled = eh.apply(wrapped, method.getGenericReturnType());
                                 if (handled != ConverterFunction.CANNOT_HANDLE)

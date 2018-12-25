@@ -404,6 +404,36 @@ public class ConverterTest {
     }
 
     @Test
+    public void testMultipleCustomErrorHandling() {
+        ConverterFunction func1 = new ConverterFunction() {
+            @Override
+            public Object apply(Object obj, Type targetType) {
+                if ("hello".equals(obj)) {
+                    return -1;
+                }
+                return ConverterFunction.CANNOT_HANDLE;
+            }
+        };
+
+        ConverterFunction func2 = new ConverterFunction() {
+            @Override
+            public Object apply(Object obj, Type targetType) {
+                if ("hello".equals(obj)) {
+                    return 0;
+                }
+                return ConverterFunction.CANNOT_HANDLE;
+            }
+        };
+        
+        ConverterBuilder cb = converter.newConverterBuilder();
+        cb.errorHandler(func1);
+        cb.errorHandler(func2);
+        Converter adapted = cb.build();
+
+        assertEquals(Integer.valueOf(0), adapted.convert("hello").to(Integer.class));
+    }
+
+    @Test
     public void testCustomErrorHandling() {
         ConverterFunction func = new ConverterFunction() {
             @Override
